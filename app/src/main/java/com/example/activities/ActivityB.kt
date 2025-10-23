@@ -1,5 +1,6 @@
 package com.example.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -22,6 +23,16 @@ class ActivityB : AppCompatActivity() {
             val intent = Intent(this, ActivityC::class.java)
 
             startActivity(intent)
+        }
+    }
+
+    companion object {
+        private const val EXTRA_BACKGROUND_COLOR = "BACKGROUND_COLOR"
+
+        fun newIntent(context: Context, colorHex: String): Intent {
+            return Intent(context, ActivityB::class.java).apply {
+                putExtra(EXTRA_BACKGROUND_COLOR, colorHex)
+            }
         }
     }
 }

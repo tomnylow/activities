@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Activities</string>
+    <string name="text_act_a_title">Это активити А</string>
+    <string name="text_btn_open_act_b">Открыть активити В</string>
+    <string name="btn_open_act_c">Открыть активити С</string>
+    <string name="act_b_title">Это активити В</string>
+    <string name="btn_open_act_a">Открыть активити А</string>
+    <string name="act_c_title">Это активити С</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,10 @@ class ActivityA : AppCompatActivity() {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
+        Log.d("ActA", "onCreate")
     }
-
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Log.d("ActA", "onNewIntent")
+    }
 }

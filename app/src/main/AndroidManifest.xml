@@ -17,7 +17,9 @@
             android:exported="false" />
         <activity
             android:name=".ActivityB"
-            android:exported="false" />
+            android:exported="false"
+            android:taskAffinity="com.example.activities.taskB"
+            />
 
         <activity
             android:name=".ActivityA"

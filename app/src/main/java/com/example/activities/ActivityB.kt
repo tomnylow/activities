@@ -44,6 +44,7 @@ class ActivityB : AppCompatActivity() {
         fun newIntent(context: Context, colorHex: String): Intent {
             return Intent(context, ActivityB::class.java).apply {
                 putExtra(EXTRA_BACKGROUND_COLOR, colorHex)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         }
     }

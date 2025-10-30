@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,7 +26,10 @@ class ActivityA : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SECURE or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        )
         setContentView(R.layout.activity_a)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -62,8 +66,11 @@ class ActivityA : AppCompatActivity() {
 
     private fun setupClickListeners() {
         buttonOpenActB.setOnClickListener {
-
-            startActivity(ActivityB.newIntent(this, editTextColor.text.toString()))
+            val colorHex = editTextColor.text.toString()
+            if ((colorHex == "") or !colorHex.matches(Regex("^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$")))
+                Toast.makeText(this, "Неверный цвет!", Toast.LENGTH_SHORT).show()
+            else
+                startActivity(ActivityB.newIntent(this, colorHex))
         }
 
         buttonGenerateColor.setOnClickListener {

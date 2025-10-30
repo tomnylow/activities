@@ -25,7 +25,7 @@
         android:id="@+id/editTextColor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="#RRGGBB"
+        android:hint="#ABCDEF"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:backgroundTint="@color/white"

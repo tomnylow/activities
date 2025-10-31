@@ -24,6 +24,8 @@
         <activity
             android:name=".ActivityA"
             android:exported="true"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
             android:launchMode="singleTask"
             android:taskAffinity="com.example.activities.taskA">
             <intent-filter>

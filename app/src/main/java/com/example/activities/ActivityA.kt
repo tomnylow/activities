@@ -1,7 +1,10 @@
 package com.example.activities
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
@@ -18,7 +21,7 @@ class ActivityA : AppCompatActivity() {
     private lateinit var buttonOpenActB: Button
     private lateinit var buttonGenerateColor: Button
     private lateinit var editTextColor: EditText
-
+    private lateinit var wakeLock : PowerManager.WakeLock
     companion object {
         private const val KEY_COLOR_TEXT = "color_text"
     }
@@ -27,10 +30,15 @@ class ActivityA : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_SECURE or
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
         setContentView(R.layout.activity_a)
+
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyApp::ActivityAWakeLock")
+        wakeLock.acquire(10*60*1000L /*10 минут*/)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -76,5 +84,9 @@ class ActivityA : AppCompatActivity() {
         buttonGenerateColor.setOnClickListener {
             editTextColor.setText(String.format("#%06X", Random.nextInt(0x1000000)))
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        wakeLock?.release()
     }
 }

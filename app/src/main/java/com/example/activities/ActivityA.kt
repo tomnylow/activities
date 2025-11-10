@@ -1,8 +1,11 @@
 package com.example.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
@@ -30,15 +33,13 @@ class ActivityA : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.addFlags(
-            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_SECURE
         )
+        setShowWhenLocked(true)
+        setTurnScreenOn(true)
         setContentView(R.layout.activity_a)
 
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        val wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, "MyApp::ActivityAWakeLock")
-        wakeLock.acquire(10*60*1000L /*10 минут*/)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -75,7 +76,7 @@ class ActivityA : AppCompatActivity() {
     private fun setupClickListeners() {
         buttonOpenActB.setOnClickListener {
             val colorHex = editTextColor.text.toString()
-            if ((colorHex == "") or !colorHex.matches(Regex("^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$")))
+            if ((colorHex == "") or !colorHex.matches(Regex("^#([0-9A-Fa-f]{6})$")))
                 Toast.makeText(this, "Неверный цвет!", Toast.LENGTH_SHORT).show()
             else
                 startActivity(ActivityB.newIntent(this, colorHex))
@@ -85,8 +86,32 @@ class ActivityA : AppCompatActivity() {
             editTextColor.setText(String.format("#%06X", Random.nextInt(0x1000000)))
         }
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        wakeLock?.release()
+
+    override fun onResume() {
+        super.onResume()
+        printActivityStack()
     }
+
+    fun printActivityStack(tag: String = "ActivityStack") {
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+
+        Log.d(tag, "=== CURRENT APP TASKS ===")
+
+        activityManager.appTasks.forEachIndexed { taskIndex, appTask ->
+            val taskInfo = appTask.taskInfo
+
+            if (taskInfo.id == -1) return
+
+            Log.d(tag, "AppTask #$taskIndex")
+            Log.d(tag, "\tTask ID: ${taskInfo.id}")
+            Log.d(tag, "\tNumber of Activities: ${taskInfo.numActivities}")
+            Log.d(tag, "\tBase Activity: ${taskInfo.baseActivity?.className}")
+            Log.d(tag, "\tTop Activity: ${taskInfo.topActivity?.className}")
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Log.d(tag, "\tisRunning: ${taskInfo.isRunning}")
+            }
+        }
+    }
+
 }

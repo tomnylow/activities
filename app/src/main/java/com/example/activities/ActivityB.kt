@@ -1,8 +1,10 @@
 package com.example.activities
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.Layout
 import android.util.Log
@@ -21,7 +23,7 @@ class ActivityB : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         setContentView(R.layout.activity_b)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -61,5 +63,31 @@ class ActivityB : AppCompatActivity() {
         findViewById<ConstraintLayout>(R.id.main).setBackgroundColor(backgroundColor)
         findViewById<TextView>(R.id.textViewColor).text = if (!colorHex.isEmpty()) colorHex else "Green"
         Log.d("ActB", "Handling intent")
+    }
+    override fun onResume() {
+        super.onResume()
+        printActivityStack()
+    }
+
+    fun printActivityStack(tag: String = "ActivityStack") {
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+
+        Log.d(tag, "=== CURRENT APP TASKS ===")
+
+        activityManager.appTasks.forEachIndexed { taskIndex, appTask ->
+            val taskInfo = appTask.taskInfo
+
+            if (taskInfo.id == -1) return
+
+            Log.d(tag, "AppTask #$taskIndex")
+            Log.d(tag, "\tTask ID: ${taskInfo.id}")
+            Log.d(tag, "\tNumber of Activities: ${taskInfo.numActivities}")
+            Log.d(tag, "\tBase Activity: ${taskInfo.baseActivity?.className}")
+            Log.d(tag, "\tTop Activity: ${taskInfo.topActivity?.className}")
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                Log.d(tag, "\tisRunning: ${taskInfo.isRunning}")
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,8 +13,22 @@
         android:theme="@style/Theme.Activities"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ActivityC"
+            android:exported="false"
+            android:taskAffinity="com.example.activities.taskB"
+             />
+        <activity
+            android:name=".ActivityB"
+            android:exported="false"
+            android:taskAffinity="com.example.activities.taskB" />
+
+        <activity
+            android:name=".ActivityA"
+            android:exported="true"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.example.activities.taskA">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
